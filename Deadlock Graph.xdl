@@ -1,0 +1,52 @@
+<deadlock-list>
+      <deadlock victim="process80574988">
+        <process-list>
+          <process id="process80574988" taskpriority="0" logused="216" waitresource="RID: 2:1:7360:0" waittime="6790" ownerId="678928045" transactionname="user_transaction" lasttranstarted="2017-06-26T14:28:01.773" XDES="0xb6ce3970" lockMode="U" schedulerid="2" kpid="1640" status="suspended" spid="183" sbid="0" ecid="0" priority="0" trancount="2" lastbatchstarted="2017-06-26T14:28:08.997" lastbatchcompleted="2017-06-26T14:28:01.773" clientapp="Microsoft SQL Server Management Studio - Query" hostname="DMasonHP" hostpid="12604" loginname="Celtics\CMaxwell" isolationlevel="read committed (2)" xactid="678928045" currentdb="1" lockTimeout="4294967295" clientoption1="671090784" clientoption2="390200">
+            <executionStack>
+              <frame procname="adhoc" line="1" stmtstart="60" sqlhandle="0x0200000005db68127d85eb887f1be301338b2f2ebaa91f6e">
+UPDATE [##Suppliers] set [Fax] = @1  WHERE [supplierid]=@2     </frame>
+              <frame procname="adhoc" line="1" sqlhandle="0x02000000ca059406a0c94311928b17b2b824c0d847e40b7f">
+UPDATE ##Suppliers
+SET Fax = N'555-1212'
+WHERE supplierid = 1;     </frame>
+            </executionStack>
+            <inputbuf>
+UPDATE ##Suppliers
+SET Fax = N'555-1212'
+WHERE supplierid = 1;    </inputbuf>
+          </process>
+          <process id="process134e43b88" taskpriority="0" logused="224" waitresource="RID: 2:3:4016:0" waittime="2844" ownerId="678928065" transactionname="user_transaction" lasttranstarted="2017-06-26T14:28:05.670" XDES="0x14ff82e90" lockMode="U" schedulerid="1" kpid="4704" status="suspended" spid="182" sbid="0" ecid="0" priority="0" trancount="2" lastbatchstarted="2017-06-26T14:28:12.930" lastbatchcompleted="2017-06-26T14:28:05.673" clientapp="Microsoft SQL Server Management Studio - Query" hostname="DMasonHP" hostpid="12604" loginname="Celtics\CMaxwell" isolationlevel="read committed (2)" xactid="678928065" currentdb="1" lockTimeout="4294967295" clientoption1="671090784" clientoption2="390200">
+            <executionStack>
+              <frame procname="adhoc" line="1" stmtstart="60" sqlhandle="0x020000005f889415278064e941bfe9fe107454d8d8caa4c4">
+UPDATE [##Employees] set [phone] = @1  WHERE [empid]=@2     </frame>
+              <frame procname="adhoc" line="1" sqlhandle="0x020000008d2d0c2d462424d968b40ec2f7564ea3d34b2790">
+UPDATE ##Employees
+SET phone = N'555-9999'
+WHERE empid = 1;     </frame>
+            </executionStack>
+            <inputbuf>
+UPDATE ##Employees
+SET phone = N'555-9999'
+WHERE empid = 1;    </inputbuf>
+          </process>
+        </process-list>
+        <resource-list>
+          <ridlock fileid="1" pageid="7360" dbid="2" objectname="tempdb.dbo.##Suppliers" id="lock19e1e7b00" mode="X" associatedObjectId="7998393042331172864">
+            <owner-list>
+              <owner id="process134e43b88" mode="X" />
+            </owner-list>
+            <waiter-list>
+              <waiter id="process80574988" mode="U" requestType="wait" />
+            </waiter-list>
+          </ridlock>
+          <ridlock fileid="3" pageid="4016" dbid="2" objectname="tempdb.dbo.##Employees" id="lockf69fdd80" mode="X" associatedObjectId="7926335448252284928">
+            <owner-list>
+              <owner id="process80574988" mode="X" />
+            </owner-list>
+            <waiter-list>
+              <waiter id="process134e43b88" mode="U" requestType="wait" />
+            </waiter-list>
+          </ridlock>
+        </resource-list>
+      </deadlock>
+    </deadlock-list>
