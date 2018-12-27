@@ -1,6 +1,9 @@
 $SqlInstance = "$env:COMPUTERNAME\SQL2017"
 $AvailabilityGroup = "MyExpenseAG"
 
+#TODO: is there a better way to do this than using a hard-coded path?
+Import-Module "C:\Program Files\WindowsPowerShell\Modules\dbatools\0.9.731\dbatools.psd1" -ErrorAction Stop
+
 <#
     Reference: https://docs.microsoft.com/en-us/sql/database-engine/availability-groups/windows/prereqs-restrictions-recommendations-always-on-availability?view=sql-server-2017#PrerequisitesForDbs
 
@@ -36,8 +39,7 @@ $Query = "SELECT d.name, s.last_log_backup_lsn
     AND d.state_desc = 'ONLINE' 
     ORDER BY d.name"
 
-#$DBList = (Invoke-DbaQuery -SqlInstance $SqlInstance -Database master -Query $Query).name
-$DBList = Invoke-DbaQuery -SqlInstance $SqlInstance -Database master -Query $Query
+$DBList = Invoke-DbaQuery -SqlInstance $SqlInstance -Database master -Query $Query -EnableException
 
 foreach($Database in $DBList)
 {
@@ -47,16 +49,23 @@ foreach($Database in $DBList)
             If last_log_backup_lsn IS NULL, the log chain is broken.
             Take a FULL database backup to default backup directory.
         #>
-        Backup-DbaDatabase -SqlInstance $SqlInstance -Database $Database.name -CompressBackup -Type Full
+        Backup-DbaDatabase -SqlInstance $SqlInstance -Database $Database.name -CompressBackup -Type Full -EnableException
     }
 
     <# TODO?: 
         Compression can be used for automatic seeding, but it is disabled by default. 
-        Turning on compression reduces network bandwidth and possibly speeds up the process, 
-        but the tradeoff is additional processor overhead. To use compression during automatic 
-        seeding, enable trace flag 9567.
+        Turning on compression reduces network bandwidth and possibly speeds up the 
+        process, but the tradeoff is additional processor overhead. 
+        To use compression during automatic seeding, enable trace flag 9567.
 
         Reference: https://docs.microsoft.com/en-us/sql/database-engine/availability-groups/windows/automatic-seeding-secondary-replicas?view=sql-server-2017#considerations
     #>
-    Add-DbaAgDatabase -SqlInstance $SqlInstance -AvailabilityGroup $AvailabilityGroup -Database $Database.name -SeedingMode Automatic
+
+    <#
+        NOTES:
+        When using -SeedingMode Automatic
+        If the seeding mode of the secondary replica is 'MANUAL' prior to invoking the cmdlet,
+        it will be 'AUTOMATIC' afterwards.
+    #>
+    Add-DbaAgDatabase -SqlInstance $SqlInstance -AvailabilityGroup $AvailabilityGroup -Database $Database.name -SeedingMode Automatic -EnableException
 }
