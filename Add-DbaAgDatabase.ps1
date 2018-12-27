@@ -58,5 +58,5 @@ foreach($Database in $DBList)
 
         Reference: https://docs.microsoft.com/en-us/sql/database-engine/availability-groups/windows/automatic-seeding-secondary-replicas?view=sql-server-2017#considerations
     #>
-    Add-DbaAgDatabase -SqlInstance $SqlInstance -AvailabilityGroup $AvailabilityGroup -Database $Database -SeedingMode Automatic
+    Add-DbaAgDatabase -SqlInstance $SqlInstance -AvailabilityGroup $AvailabilityGroup -Database $Database.name -SeedingMode Automatic
 }
